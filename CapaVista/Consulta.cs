@@ -22,12 +22,33 @@ namespace CapaVista
 
         public void actualizardatagridview()
         {
-            DataTable dt = cn.llenarTbl(tabla);
-            Dgv_consulta.DataSource = dt;
+            try
+            {
+                // Llamar al controlador para obtener los datos desde la base de datos
+                DataTable dt = cn.llenarTbl(tabla);
+                // Verificar si la tabla tiene filas antes de cargar los datos
+                if (dt.Rows.Count > 0)
+                {
+                    // Asignar los datos al DataGridView
+                    Dgv_consulta.DataSource = dt;
+                }
+                else
+                {
+                    MessageBox.Show("No se encontraron registros en la tabla.", "Consulta vacía",
+                   MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Mostrar un mensaje de error si algo sale mal
+                MessageBox.Show("Error al consultar los registros: " + ex.Message, "Error",
+               MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void BtnConsulta_Click(object sender, EventArgs e)
         {
+            //Llena los datos de la tabla en el datagridview
             actualizardatagridview();
         }
 
