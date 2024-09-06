@@ -14,7 +14,7 @@ namespace CapaModelo
         public OdbcConnection conexion()
         {
             //creacion de la conexion via ODBC
-            OdbcConnection conn = new OdbcConnection("Dsn=Taller");
+            OdbcConnection conn = new OdbcConnection("Dsn=Prueba1");
             try
             {
                 conn.Open();
