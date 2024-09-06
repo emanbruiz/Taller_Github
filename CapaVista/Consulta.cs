@@ -69,23 +69,73 @@ namespace CapaVista
 
         private void btn_ingresar_Click(object sender, EventArgs e)
         {
-            string codigotext = txt_codigo.Text;
-            int codigo = Convert.ToInt32(codigotext);
-            string nombre = txt_nombre.Text;
-            string puesto = txt_puesto.Text;
-            string departamento = txt_departamento.Text;
-            string estadotexto = txt_estado.Text;
-            int estado = Convert.ToInt32(estadotexto);
+            // Validar que los campos no estén vacíos antes de proceder
+            if (string.IsNullOrWhiteSpace(txt_codigo.Text) ||
+                string.IsNullOrWhiteSpace(txt_nombre.Text) ||
+                string.IsNullOrWhiteSpace(txt_puesto.Text) ||
+                string.IsNullOrWhiteSpace(txt_departamento.Text) ||
+                string.IsNullOrWhiteSpace(txt_estado.Text))
+            {
+                // Mostrar mensaje de advertencia si hay campos vacíos
+                MessageBox.Show("Por favor, complete todos los campos antes de ingresar un nuevo registro.",
+                                "Campos incompletos",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                return;
+            }
 
             try
             {
-                cn.saveEmpleado(codigo, nombre, puesto, departamento, estado);
-                MessageBox.Show("Registro Agregado correctamente :)");
+                // Obtener los datos del formulario
+                int codigo = Convert.ToInt32(txt_codigo.Text);
+                string nombre = txt_nombre.Text;
+                string puesto = txt_puesto.Text;
+                string departamento = txt_departamento.Text;
+                int estado = Convert.ToInt32(txt_estado.Text);
+
+                // Confirmar antes de realizar el ingreso del nuevo registro
+                DialogResult confirmacion = MessageBox.Show("¿Está seguro de que desea agregar este registro?",
+                                                            "Confirmar ingreso",
+                                                            MessageBoxButtons.YesNo,
+                                                            MessageBoxIcon.Question);
+
+                if (confirmacion == DialogResult.Yes)
+                {
+                    // Llamar al controlador para guardar el nuevo registro
+                    cn.saveEmpleado(codigo, nombre, puesto, departamento, estado);
+
+                    // Mostrar mensaje de éxito
+                    MessageBox.Show("Registro agregado correctamente.", "Ingreso exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Limpiar los campos después de agregar el registro
+                    LimpiarCampos();
+
+                    // Refrescar el DataGridView después de agregar el nuevo registro
+                    actualizardatagridview();
+                }
             }
-            catch
+            catch (FormatException)
             {
-                MessageBox.Show("Registro No ingresado");
+                // Mostrar un mensaje si ocurre un error de formato (ej. si los campos numéricos contienen texto)
+                MessageBox.Show("Por favor, ingrese valores numéricos válidos para el código y el estado.",
+                                "Error de formato",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
+            catch (Exception ex)
+            {
+                // Mostrar un mensaje si ocurre cualquier otro error
+                MessageBox.Show("Error al ingresar el registro: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LimpiarCampos()
+        {
+            txt_codigo.Clear();
+            txt_nombre.Clear();
+            txt_puesto.Clear();
+            txt_departamento.Clear();
+            txt_estado.Clear();
         }
 
         private void button2_Click(object sender, EventArgs e)
