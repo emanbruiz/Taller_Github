@@ -65,10 +65,8 @@ namespace CapaVista
                 Controlador ctriv = new Controlador();
                 if (Dgv_consulta.SelectedRows.Count > 0)
                 {
-                    // Obtener la primera fila seleccionada
                     DataGridViewRow selectedRow = Dgv_consulta.SelectedRows[0];
 
-                    // Obtiene el valor de la primera celda de esa fila y la convierte a entero
                     if (selectedRow.Cells[0].Value != null)
                     {
                         int llave = Convert.ToInt32(selectedRow.Cells[0].Value);
@@ -78,7 +76,6 @@ namespace CapaVista
                 }
                 else
                 {
-                    // Manejar el caso en el que no hay filas seleccionadas
                     MessageBox.Show("No hay filas seleccionadas en el DataGridView.");
                 }
             }
@@ -96,27 +93,49 @@ namespace CapaVista
             txt_puesto.Text = Dgv_consulta.CurrentRow.Cells[2].Value.ToString();
             txt_departamento.Text = Dgv_consulta.CurrentRow.Cells[3].Value.ToString();
             txt_estado.Text = Dgv_consulta.CurrentRow.Cells[4].Value.ToString();
-       
         }
+
 
         private void button3_Click(object sender, EventArgs e)
         {
             try
             {
-                Controlador ctriv = new Controlador();
-                string codigotext = txt_codigo.Text;
-                int id = Convert.ToInt32(codigotext);
-                string n = txt_nombre.Text;
-                string p = txt_puesto.Text;
-                string d = txt_departamento.Text;
-                string estadotxt = txt_estado.Text;
-                int es = Convert.ToInt32(estadotxt);
-                ctriv.modificar(id, n, p, d, es);
-                MessageBox.Show("Registro Modificado Correctamente");
+                if (!string.IsNullOrWhiteSpace(txt_codigo.Text) &&
+                    !string.IsNullOrWhiteSpace(txt_nombre.Text) &&
+                    !string.IsNullOrWhiteSpace(txt_puesto.Text) &&
+                    !string.IsNullOrWhiteSpace(txt_departamento.Text) &&
+                    !string.IsNullOrWhiteSpace(txt_estado.Text))
+                {
+                    DialogResult confirmacion = MessageBox.Show("¿Está seguro de que desea modificar este registro?",
+                                                                "Confirmar modificación",
+                                                                MessageBoxButtons.YesNo,
+                                                                MessageBoxIcon.Question);
+
+                    if (confirmacion == DialogResult.Yes)
+                    {
+                        Controlador controlador = new Controlador();
+
+                        int id = Convert.ToInt32(txt_codigo.Text);
+                        string nombre = txt_nombre.Text;
+                        string puesto = txt_puesto.Text;
+                        string departamento = txt_departamento.Text;
+                        int estado = Convert.ToInt32(txt_estado.Text);
+
+                        controlador.modificar(id, nombre, puesto, departamento, estado);
+
+                        MessageBox.Show("Registro modificado correctamente.", "Modificación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        actualizardatagridview();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Por favor, complete todos los campos antes de modificar.", "Campos incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Registro No Modificado");
+                MessageBox.Show("Error al modificar el registro: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
