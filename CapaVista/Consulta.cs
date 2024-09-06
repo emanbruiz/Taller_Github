@@ -22,30 +22,40 @@ namespace CapaVista
 
         public void actualizardatagridview()
         {
-            try
+            // Mostrar un mensaje de confirmación antes de proceder con la carga de datos
+            DialogResult confirmacion = MessageBox.Show("¿Está seguro de que desea cargar los datos?",
+                                                        "Confirmar carga de datos",
+                                                        MessageBoxButtons.YesNo,
+                                                        MessageBoxIcon.Question);
+
+            // Si el usuario confirma la carga
+            if (confirmacion == DialogResult.Yes)
             {
-                // Llamar al controlador para obtener los datos desde la base de datos
-                DataTable dt = cn.llenarTbl(tabla);
-                // Verificar si la tabla tiene filas antes de cargar los datos
-                if (dt.Rows.Count > 0)
+
+                try
                 {
-                    // Asignar los datos al DataGridView
-                    Dgv_consulta.DataSource = dt;
+                    // Llamar al controlador para obtener los datos desde la base de datos
+                    DataTable dt = cn.llenarTbl(tabla);
+                    // Verificar si la tabla tiene filas antes de cargar los datos
+                    if (dt.Rows.Count > 0)
+                    {
+                        // Asignar los datos al DataGridView
+                        Dgv_consulta.DataSource = dt;
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontraron registros en la tabla.", "Consulta vacía",
+                       MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No se encontraron registros en la tabla.", "Consulta vacía",
-                   MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Mostrar un mensaje de error si algo sale mal
+                    MessageBox.Show("Error al consultar los registros: " + ex.Message, "Error",
+                   MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
-            catch (Exception ex)
-            {
-                // Mostrar un mensaje de error si algo sale mal
-                MessageBox.Show("Error al consultar los registros: " + ex.Message, "Error",
-               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void BtnConsulta_Click(object sender, EventArgs e)
         {
             //Llena los datos de la tabla en el datagridview
@@ -104,6 +114,7 @@ namespace CapaVista
 
         private void button1_Click(object sender, EventArgs e)
         {
+            // Llama al metodo de actualizar datagridview
             actualizardatagridview();
         }
 
