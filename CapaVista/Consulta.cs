@@ -140,28 +140,55 @@ namespace CapaVista
 
         private void button2_Click(object sender, EventArgs e)
         {
-
-            if (MessageBox.Show("¿Esta seguro que desea eliminar este registro?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            // Verificar si hay una fila seleccionada en el DataGridView
+            if (Dgv_consulta.SelectedRows.Count > 0)
             {
-                Controlador ctriv = new Controlador();
-                if (Dgv_consulta.SelectedRows.Count > 0)
-                {
-                    DataGridViewRow selectedRow = Dgv_consulta.SelectedRows[0];
+                // Obtener la primera fila seleccionada
+                DataGridViewRow selectedRow = Dgv_consulta.SelectedRows[0];
 
-                    if (selectedRow.Cells[0].Value != null)
+                // Obtener el valor del código del empleado (llave primaria) de la primera celda
+                if (selectedRow.Cells[0].Value != null)
+                {
+                    int llave = Convert.ToInt32(selectedRow.Cells[0].Value);
+
+                    // Mostrar un mensaje de confirmación antes de eliminar el registro
+                    DialogResult confirmacion = MessageBox.Show("¿Está seguro de que desea eliminar este registro?",
+                                                                "Confirmar eliminación",
+                                                                MessageBoxButtons.YesNo,
+                                                                MessageBoxIcon.Question);
+
+                    if (confirmacion == DialogResult.Yes)
                     {
-                        int llave = Convert.ToInt32(selectedRow.Cells[0].Value);
-                        ctriv.eliminar(llave);
-                        MessageBox.Show("Eliminado Exitosamente");
+                        try
+                        {
+                            // Llamar al controlador para eliminar el registro
+                            cn.eliminar(llave);
+
+                            // Mostrar mensaje de éxito
+                            MessageBox.Show("Registro eliminado exitosamente.", "Eliminación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Refrescar el DataGridView después de eliminar el registro
+                            actualizardatagridview();
+                        }
+                        catch (Exception ex)
+                        {
+                            // Mostrar un mensaje de error si algo sale mal
+                            MessageBox.Show("Error al eliminar el registro: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 else
                 {
-                    MessageBox.Show("No hay filas seleccionadas en el DataGridView.");
+                    // Mostrar un mensaje si no se puede obtener el valor de la llave primaria
+                    MessageBox.Show("No se ha seleccionado un registro válido para eliminar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
+            else
+            {
+                // Mostrar un mensaje si no hay filas seleccionadas
+                MessageBox.Show("Por favor, seleccione un registro en el DataGridView para eliminar.", "Selección requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             // Llama al metodo de actualizar datagridview
