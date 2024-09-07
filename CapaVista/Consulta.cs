@@ -189,10 +189,43 @@ namespace CapaVista
                 MessageBox.Show("Por favor, seleccione un registro en el DataGridView para eliminar.", "Selección requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void refrescarFormulario()
+        {
+            // Mostrar un mensaje de confirmación antes de refrescar el formulario
+            DialogResult confirmacion = MessageBox.Show("¿Está seguro de que desea refrescar el formulario? Esto borrará los datos ingresados.",
+                                                        "Confirmar refresco",
+                                                        MessageBoxButtons.YesNo,
+                                                        MessageBoxIcon.Question);
+
+            // Si el usuario confirma, proceder con el refresco
+            if (confirmacion == DialogResult.Yes)
+            {
+                try
+                {
+                    // Limpiar todos los campos del formulario
+                    LimpiarCampos();
+
+                    // Refrescar el DataGridView
+                    actualizardatagridview();
+
+                    // Mostrar un mensaje indicando que el formulario ha sido refrescado
+                    MessageBox.Show("Formulario refrescado correctamente.", "Refresco exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    // Manejar cualquier error que ocurra durante el proceso de refresco
+                    MessageBox.Show("Error al refrescar el formulario: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             // Llama al metodo de actualizar datagridview
-            actualizardatagridview();
+            refrescarFormulario();
+            //actualizardatagridview();
         }
 
         private void Dgv_consulta_CellContentClick(object sender, DataGridViewCellEventArgs e)
