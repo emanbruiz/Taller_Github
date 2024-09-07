@@ -203,22 +203,57 @@ namespace CapaVista
             {
                 try
                 {
-                    // Limpiar todos los campos del formulario
+                    // Añadir una breve pausa visual para el refresco (simulando una animación)
+                    this.Cursor = Cursors.WaitCursor; // Cambiar el cursor a modo de espera
+
+                    // Limpiar todos los campos de texto del formulario
                     LimpiarCampos();
 
-                    // Refrescar el DataGridView
+                    // Restablecer otros controles como ComboBox, CheckBox, y RadioButton
+                    foreach (Control control in this.Controls)
+                    {
+                        if (control is ComboBox comboBox)
+                        {
+                            comboBox.SelectedIndex = -1; // Desmarcar cualquier selección en ComboBox
+                        }
+                        else if (control is CheckBox checkBox)
+                        {
+                            checkBox.Checked = false; // Desmarcar cualquier CheckBox
+                        }
+                        else if (control is RadioButton radioButton)
+                        {
+                            radioButton.Checked = false; // Desmarcar cualquier RadioButton
+                        }
+                    }
+
+                    // Refrescar el DataGridView con los datos actualizados
                     actualizardatagridview();
 
-                    // Mostrar un mensaje indicando que el formulario ha sido refrescado
-                    MessageBox.Show("Formulario refrescado correctamente.", "Refresco exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Mover el foco al primer campo para facilitar la entrada de datos
+                    txt_codigo.Focus();
+
+                    // Mostrar un mensaje de éxito con un tono visual agradable
+                    MessageBox.Show("Formulario refrescado correctamente. Listo para nuevos datos.",
+                                    "Refresco exitoso",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    // Manejar cualquier error que ocurra durante el proceso de refresco
-                    MessageBox.Show("Error al refrescar el formulario: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Manejar cualquier error durante el refresco
+                    MessageBox.Show("Error al refrescar el formulario: " + ex.Message,
+                                    "Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // Restablecer el cursor a su estado normal después del refresco
+                    this.Cursor = Cursors.Default;
                 }
             }
         }
+
 
 
         private void button1_Click(object sender, EventArgs e)
